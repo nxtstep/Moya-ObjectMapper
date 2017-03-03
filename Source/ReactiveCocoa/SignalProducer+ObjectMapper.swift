@@ -3,13 +3,13 @@ import Moya
 import ObjectMapper
 
 /// Extension for processing Responses into Mappable objects through ObjectMapper
-extension SignalProducerProtocol where Value == Moya.Response, Error == Moya.Error {
+extension SignalProducerProtocol where Value == Moya.Response, Error == MoyaError {
 
   /// Maps data received from the signal into an object which implements the Mappable protocol.
   /// If the conversion fails, the signal errors.
   public func mapObject<T: BaseMappable>(_ type: T.Type, context: MapContext? = nil) -> SignalProducer<T, Error> {
-    return producer.flatMap(.Latest) { response -> SignalProducer<T, Error> in
-      return unwrapThrowable { try response.mapObject(T, context) }
+    return producer.flatMap(.latest) { response -> SignalProducer<T, Error> in
+      return unwrapThrowable { try response.mapObject(T.self, context: context) }
     }
   }
 
@@ -17,8 +17,8 @@ extension SignalProducerProtocol where Value == Moya.Response, Error == Moya.Err
   /// protocol.
   /// If the conversion fails, the signal errors.
   public func mapArray<T: BaseMappable>(_ type: T.Type, context: MapContext? = nil) -> SignalProducer<[T], Error> {
-    return producer.flatMap(.Latest) { response -> SignalProducer<[T], Error> in
-      return unwrapThrowable { try response.mapArray(T, context) }
+    return producer.flatMap(.latest) { response -> SignalProducer<[T], Error> in
+      return unwrapThrowable { try response.mapArray(T.self, context: context) }
     }
   }
 }
